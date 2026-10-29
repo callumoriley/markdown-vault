@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>kb</title>
+<style>
+  [hidden] { display: none !important; }
+  #login { max-width: 22em; margin: 20vh auto 0; display: flex; flex-wrap: wrap; gap: .5em; }
+  #login input { flex: 1; }
+</style>
+
+<form id="login" hidden>
+  <input id="pw" type="password" aria-label="Password" placeholder="Password" autocomplete="current-password">
+  <button>Unlock</button>
+  <span id="msg"></span>
+</form>
+
+<div id="app" hidden>
+  <button id="lock">Lock</button>
+  <ul id="list"></ul>
+  <hr>
+  <main id="note"></main>
+</div>
+
+<script src="vendor/marked.umd.js"></script>
+<script src="app.js"></script>
