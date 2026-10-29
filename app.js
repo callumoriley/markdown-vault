@@ -62,7 +62,8 @@ function idb(mode, fn) {
 }
 
 const sameBytes = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
-const currentPath = () => decodeURIComponent(location.hash.slice(1)) || "index.md";
+const decode = (s, fn) => { try { return fn(s); } catch { return s; } };  // malformed %-escapes stay as typed
+const currentPath = () => decode(location.hash.slice(1), decodeURIComponent) || "index.md";
 
 function show(bytes) {
   notes = JSON.parse(new TextDecoder().decode(bytes)).notes;
@@ -96,7 +97,7 @@ function route() {
   for (const a of $("note").querySelectorAll("a[href]")) {
     const href = a.getAttribute("href");
     if (!/^([a-z][a-z0-9+.-]*:|#|\/)/i.test(href))
-      a.setAttribute("href", "#" + encodeURI(resolve(path, decodeURI(href.split("#")[0]))));
+      a.setAttribute("href", "#" + encodeURI(resolve(path, decode(href.split("#")[0], decodeURI))));
   }
 }
 
@@ -111,7 +112,8 @@ async function start() {
   }
   const stored = await idb("readonly", s => s.get("vault")).catch(() => null);
   if (stored && sameBytes(stored.header, blob.header)) {
-    try { return show(await decryptBlob(blob, stored.key)); } catch { /* stale key: ask again */ }
+    const bytes = await decryptBlob(blob, stored.key).catch(() => null);  // stale key: ask again
+    if (bytes) return show(bytes);
   }
   $("login").hidden = false;
 }
